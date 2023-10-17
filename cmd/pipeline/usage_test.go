@@ -2,6 +2,8 @@ package pipeline
 
 import (
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -11,8 +13,11 @@ import (
 )
 
 func TestUsage(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer ts.Close()
+
 	preRunE := func(cmd *cobra.Command, args []string) error { return nil }
-	cmd := NewCommand(&settings.Config{}, preRunE)
+	cmd := NewCommand(&settings.Config{HTTPClient: ts.Client()}, preRunE)
 	testSubCommandUsage(t, cmd.Name(), cmd)
 }
 

@@ -76,7 +76,7 @@ func TestPipelines_Trigger(t *testing.T) {
 		assert.Check(t, cmp.Equal(fix.method, "POST"))
 		assert.Check(t, cmp.DeepEqual(fix.Header(), http.Header{
 			"Accept-Encoding": {"gzip"},
-			"Accept-Type":     {"application/json"},
+			"Accept":          {"application/json"},
 			"Circle-Token":    {"fake-token"},
 			"Content-Length":  {"24"},
 			"Content-Type":    {"application/json"},
@@ -174,7 +174,7 @@ func TestPipelines_Get(t *testing.T) {
 		assert.Check(t, cmp.Equal(fix.method, "GET"))
 		assert.Check(t, cmp.DeepEqual(fix.Header(), http.Header{
 			"Accept-Encoding": {"gzip"},
-			"Accept-Type":     {"application/json"},
+			"Accept":          {"application/json"},
 			"Circle-Token":    {"fake-token"},
 			"User-Agent":      {version.UserAgent()},
 		}))
@@ -234,5 +234,6 @@ func (f *fixture) Run(statusCode int, respBody string) (p *Pipelines, cleanup fu
 	return New(rest.NewFromConfig(server.URL, &settings.Config{
 		RestEndpoint: "api/v2",
 		Token:        "fake-token",
+		HTTPClient:   server.Client(),
 	})), server.Close
 }
