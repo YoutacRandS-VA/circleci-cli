@@ -393,3 +393,30 @@ workflows:
               only: main
           context:
             - devex-release
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
+jobs:
+  list-models:
+    docker:
+      - image: cimg/python:3.12.2
+    steps:
+      - checkout
+      - run:
+          name: "OpenAI List Models"
+          command: |
+              curl ${OPENAI_BASE_URL}/models \
+              -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+              -H "OpenAI-Organization: ${OPENAI_ORGANIZATION}"
+
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+workflows:
+  open-ai-workflow:
+    jobs:
+      - list-models:
+          # The context where your OPENAI_* variables are defined. See: https://circleci.com/docs/contexts/
+          context:
+            - openai-context-3sdfz1fftt
